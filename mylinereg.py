@@ -13,7 +13,7 @@ class MyLineReg:
 
     def fit(self, x: pd.DataFrame, y: pd.Series, verbose=False):
         one_column = np.ones(len(x))
-        x.insert(0, 'w0', one_column)
+        x.insert(0, 'x0', one_column)
         self.weights = np.ones(x.shape[1])
         for i in range(self.iter):
             y_prediction = x.dot(self.weights)
@@ -28,3 +28,9 @@ class MyLineReg:
 
     def get_coef(self):
         return np.mean(self.weights[1::])
+
+    def predict(self, x: pd.DataFrame):
+        one_column = np.ones(len(x))
+        x.insert(0, 'x0', one_column)
+        y_predict = x.dot(self.weights)
+        return y_predict
