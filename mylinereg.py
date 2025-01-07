@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
+import random
 
 
 class MyLineReg:
-    def __init__(self, n_iter: int = 100, learning_rate: float = 0.1, metric=None,
-                 reg: str = None, l1_coef=0, l2_coef=0):
+    def __init__(self, n_iter: int = 100, learning_rate=0.1, metric=None, reg: str = None, l1_coef=0, l2_coef=0):
         self.iter = n_iter
         self.learning_rate = learning_rate
         self.weights = []
@@ -20,12 +20,15 @@ class MyLineReg:
         one_column = np.ones(len(x))
         x.insert(0, 'x0', one_column)
         self.weights = np.ones(x.shape[1])
-        for i in range(self.iter):
+        for i in range(1, self.iter + 1):
             y_prediction = x.dot(self.weights)
             self.loss = self.metric_error(y, y_prediction)
             grad_reg = self.grad_reg()
             grad = (2/len(y)) * np.dot((y_prediction - y), x) + grad_reg
-            self.weights = self.weights - grad * self.learning_rate
+            if callable(self.learning_rate):
+                self.weights = self.weights - grad * self.learning_rate(i)
+            else:
+                self.weights = self.weights - grad * self.learning_rate
             if verbose:
                 if i == 0:
                     print(f'start | loss:{self.loss}|{self.metric}: {self.loss}')
